@@ -50,67 +50,105 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.diceapp.ui.theme.DiceAppTheme
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.yield
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val navController = rememberNavController()
+            val myDiceResults = mutableListOf<Int>()
+            NavHost(navController = navController, startDestination = "first_screen") {
+                composable("first_screen") {
 
-            var number by remember {
-                mutableIntStateOf(0)
-            }
-            var isDice by remember {
-                mutableStateOf(false)
-            }
-
-            Column{
-                Row {
-                    // Dice
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth(0.5f)
-                            .padding(start = 16.dp, top = 16.dp, end = 8.dp)
-                    ) {
-                        ImageCard(
-                            painter = painterResource(id = R.drawable.dice),
-                            contentDescription = "Roll the dice",
-                            title = "Roll the dice",
-                            onClick = { number = (0..6).random()
-                                        isDice = false}
-                        )
+                    var number by remember {
+                        mutableIntStateOf(0)
                     }
-                    // Coin
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(end = 16.dp, top = 16.dp, start = 8.dp)
-                    ) {
-                        ImageCard(
-                            painter = painterResource(id = R.drawable.coinflip),
-                            contentDescription = "Flip the coin",
-                            title = "Flip the coin",
-                            onClick = { number = (0..1).random()
+                    var isDice by remember {
+                        mutableStateOf(false)
+                    }
+
+
+                    Column{
+                        // Dice and Coin
+                        Row {
+                            // Dice
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth(0.5f)
+                                    .padding(start = 16.dp, top = 16.dp, end = 8.dp)
+                            ) {
+                                ImageCard(
+                                    painter = painterResource(id = R.drawable.dice),
+                                    contentDescription = "Roll the dice",
+                                    title = "Roll the dice",
+                                    onClick = { number = (1..6).random()
+                                        isDice = false
+                                        myDiceResults.add(number) }
+                                )
+                            }
+                            // Coin
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(end = 16.dp, top = 16.dp, start = 8.dp)
+                            ) {
+                                ImageCard(
+                                    painter = painterResource(id = R.drawable.coinflip),
+                                    contentDescription = "Flip the coin",
+                                    title = "Flip the coin",
+                                    onClick = { number = (0..1).random()
                                         isDice = true}
-                        )
+                                )
+                            }
+                        }
+                        // Results card
+                        Row (modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ){
+                            ResultsCard(number = number, isDice)
+                        }
+                        // Stats Page
+                        Row (modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ){
+                            // Add a button to navigate to the second screen
+                            Button(onClick = { navController.navigate("second_screen") }) {
+                                Text("See past results")
+                            }
+                        }
+
                     }
+
                 }
-                Row (modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
+                composable("second_screen") {
+                    Column {
+                        Text(text = "History:")
+                        Text(text = "${myDiceResults}")
+                        Button(onClick = { navController.navigate("first_screen") }) {
+                            Text("Go back")
+                        }
+                    }
 
-
-                    verticalAlignment = Alignment.CenterVertically
-                ){
-                    ResultsCard(number = number, isDice)
                 }
-
-
             }
-
-
-
         }
     }
+}
+
+
+fun displayResults(list: List<Int>) {
+
+    for (num in list){
+        
+        print("$num, ")
+
+    }
+
 }
 
 @Composable
@@ -235,23 +273,9 @@ fun ImageCard(
 
 @Composable
 fun SecondScreen() {
-    Text(text = "This is the second screen")
+
 }
 
-//Row {
-//    val navController = rememberNavController()
-//
-//    NavHost(navController = navController, startDestination = "first_screen") {
-//        composable("first_screen") {
-//            // Your first screen composable here
-//            // Add a button to navigate to the second screen
-//            Button(onClick = { navController.navigate("second_screen") }) {
-//                Text("Go to second screen")
-//            }
-//        }
-//        composable("second_screen") {
-//            SecondScreen()
-//        }
-//    }
-//}
+
+
 
