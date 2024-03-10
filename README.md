@@ -5,7 +5,7 @@ This is an app that lets you roll a dice and flip a coin.
 I created this simple project to learn some of the features of Jetpack Compose.
 
 
-[Software Demo Video](http://youtube.link.goes.here)
+[Software Demo Video]([http://youtube.link.goes.here](https://youtu.be/BmK0-N6idA0))
 
 # Development Environment
 
